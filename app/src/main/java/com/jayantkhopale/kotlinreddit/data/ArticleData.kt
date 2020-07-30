@@ -1,9 +1,10 @@
 package com.jayantkhopale.kotlinreddit.data
 
 
+import androidx.recyclerview.widget.DiffUtil
 import com.google.gson.annotations.SerializedName
 
-data class DataX(
+data class ArticleData(
     @SerializedName("all_awardings")
     val allAwardings: List<Any>?,
     @SerializedName("allow_live_comments")
@@ -115,7 +116,7 @@ data class DataX(
     @SerializedName("locked")
     val locked: Boolean?,
     @SerializedName("media")
-    val media: Any?,
+    val media: Media?,
     @SerializedName("media_embed")
     val mediaEmbed: MediaEmbedX?,
     @SerializedName("media_metadata")
@@ -165,7 +166,7 @@ data class DataX(
     @SerializedName("score")
     val score: Int?,
     @SerializedName("secure_media")
-    val secureMedia: Any?,
+    val secureMedia: SecureMedia?,
     @SerializedName("secure_media_embed")
     val secureMediaEmbed: SecureMediaEmbedX?,
     @SerializedName("selftext")
@@ -218,4 +219,20 @@ data class DataX(
     val whitelistStatus: String?,
     @SerializedName("wls")
     val wls: Int?
-)
+) {
+    fun getThumbnailUrl(): String? {
+        return media?.oembed?.thumbnailUrl ?: secureMedia?.oembed?.thumbnailUrl
+    }
+
+    fun getThumbailAspectRatio(): Float? {
+        val oembed = media?.oembed ?: secureMedia?.oembed
+        return oembed?.let {
+            it.thumbnailHeight?.let { it1 -> it.thumbnailWidth?.toFloat()?.div(it1) }
+        }
+    }
+}
+
+object ArticleDiffCallback : DiffUtil.ItemCallback<ArticleData>() {
+    override fun areItemsTheSame(oldItem: ArticleData, newItem: ArticleData) = oldItem.id == newItem.id
+    override fun areContentsTheSame(oldItem: ArticleData, newItem: ArticleData) = oldItem == newItem
+}
