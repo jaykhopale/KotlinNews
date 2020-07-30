@@ -12,7 +12,8 @@ import com.jayantkhopale.kotlinreddit.data.ArticleData
 import com.jayantkhopale.kotlinreddit.data.ArticleDiffCallback
 import com.jayantkhopale.kotlinreddit.databinding.ItemNewsArticleBinding
 
-class NewsAdapter : ListAdapter<ArticleData, NewsAdapter.NewsViewHolder>(ArticleDiffCallback) {
+class NewsAdapter(private val articleClickListener: ArticleClickListener) :
+    ListAdapter<ArticleData, NewsAdapter.NewsViewHolder>(ArticleDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         val itemBinding = ItemNewsArticleBinding
@@ -21,13 +22,16 @@ class NewsAdapter : ListAdapter<ArticleData, NewsAdapter.NewsViewHolder>(Article
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), articleClickListener)
     }
 
     class NewsViewHolder(private val itemNewsArticleBinding: ItemNewsArticleBinding) :
         RecyclerView.ViewHolder(itemNewsArticleBinding.root) {
 
-        fun bind(article: ArticleData) {
+        fun bind(article: ArticleData, articleClickListener: ArticleClickListener) {
+            itemNewsArticleBinding.root.setOnClickListener {
+                articleClickListener.onArticleClicked(article)
+            }
             itemNewsArticleBinding.articleTitle.text = article.title
             if (!TextUtils.isEmpty(article.getThumbnailUrl()) && article.getThumbailAspectRatio() != null) {
                 val constraintSet = ConstraintSet()

@@ -1,16 +1,17 @@
 package com.jayantkhopale.kotlinreddit.ui
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.jayantkhopale.kotlinreddit.api.NewsRepository
 import com.jayantkhopale.kotlinreddit.api.NewsResult
 import com.jayantkhopale.kotlinreddit.data.ArticleData
 import kotlinx.coroutines.Dispatchers
 
 class NewsViewModel @ViewModelInject constructor(private val newsRepository: NewsRepository) : ViewModel() {
+
+    val newsArticle: LiveData<ArticleData>
+    get() = _newsArticle
+    private val _newsArticle = MutableLiveData<ArticleData>()
 
     val kotlinNews: LiveData<NewsResult> = liveData(viewModelScope.coroutineContext +
             Dispatchers.IO) {
@@ -23,4 +24,9 @@ class NewsViewModel @ViewModelInject constructor(private val newsRepository: New
             emit(NewsResult.Failure(exception))
         }
     }
+
+    fun setArticle(articleData: ArticleData) {
+        _newsArticle.value = articleData
+    }
+
 }

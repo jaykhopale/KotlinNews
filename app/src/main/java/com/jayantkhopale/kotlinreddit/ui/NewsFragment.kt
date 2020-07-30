@@ -4,18 +4,18 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jayantkhopale.kotlinreddit.R
 import com.jayantkhopale.kotlinreddit.api.NewsResult
+import com.jayantkhopale.kotlinreddit.data.ArticleData
 import com.jayantkhopale.kotlinreddit.databinding.NewsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class NewsFragment : Fragment(R.layout.news_fragment) {
-
-    private var newsFragmentBinding: NewsFragmentBinding? = null
 
     private val newsViewModel: NewsViewModel by navGraphViewModels(R.id.kotlin_news_graph) {
         defaultViewModelProviderFactory
@@ -24,9 +24,14 @@ class NewsFragment : Fragment(R.layout.news_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = NewsFragmentBinding.bind(view)
-        newsFragmentBinding = binding
 
-        val newsAdapter = NewsAdapter()
+        val newsAdapter = NewsAdapter(object : ArticleClickListener {
+            override fun onArticleClicked(articleData: ArticleData) {
+                newsViewModel.setArticle(articleData)
+                findNavController().navigate(R.id.action_newsFragment_to_articleDetailFragment)
+            }
+        })
+
         newsAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         val listLayoutManager = LinearLayoutManager(activity).apply {
             orientation = LinearLayoutManager.VERTICAL
@@ -53,10 +58,4 @@ class NewsFragment : Fragment(R.layout.news_fragment) {
             }
         })
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        newsFragmentBinding = null
-    }
-
 }

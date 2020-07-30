@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.jayantkhopale.kotlinreddit.R
 import com.jayantkhopale.kotlinreddit.databinding.NewsActivityBinding
@@ -14,6 +15,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class NewsActivity : AppCompatActivity() {
 
     private lateinit var newsActivityBinding: NewsActivityBinding
+    private lateinit var appBarConfiguration: AppBarConfiguration
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +25,13 @@ class NewsActivity : AppCompatActivity() {
         val toolbar = newsActivityBinding.toolbar
         setSupportActionBar(toolbar)
         val navController = findNavController(R.id.nav_host_fragment)
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp(appBarConfiguration)
+                || super.onSupportNavigateUp()
     }
 }
