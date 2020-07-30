@@ -3,7 +3,7 @@ package com.jayantkhopale.kotlinreddit.api
 import com.jayantkhopale.kotlinreddit.data.ArticleData
 
 /**
- * A sealed class to encapsulate results while news articles.
+ * A sealed class to encapsulate results for news articles.
  */
 sealed class NewsResult {
     object Loading : NewsResult()
